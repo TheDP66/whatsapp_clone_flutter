@@ -42,14 +42,14 @@ class ContactCard extends StatelessWidget {
         ),
       ),
       subtitle: contactSource.profileImageUrl.isEmpty
-          ? Text(
+          ? null
+          : Text(
               "Hey there! I'm using WhatsApp",
               style: TextStyle(
                 color: context.theme.greyColor,
                 fontWeight: FontWeight.w600,
               ),
-            )
-          : null,
+            ),
       trailing: contactSource.profileImageUrl.isEmpty
           ? TextButton(
               onPressed: onTap,
