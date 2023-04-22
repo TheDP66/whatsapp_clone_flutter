@@ -42,9 +42,17 @@ class _ChatTextFieldState extends ConsumerState<ChatTextField> {
       ),
     );
 
-    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-      widget.scrollController.animateTo(widget.scrollController, duration: duration, curve: curve)
-    },);
+    SchedulerBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        widget.scrollController.animateTo(
+          widget.scrollController.position.maxScrollExtent,
+          duration: const Duration(
+            milliseconds: 300,
+          ),
+          curve: Curves.easeOut,
+        );
+      },
+    );
   }
 
   @override
