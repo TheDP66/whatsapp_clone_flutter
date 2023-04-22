@@ -1,0 +1,12 @@
+Install Firebase to Flutter
+
+- dart pub global activate flutterfire_cli
+- flutterfirebase config
+  - Choose project > Enter
+  - Enter
+- main.dart > add this line:
+  - WidgetsFlutterBinding.ensureInitialized();
+  - await Firebase.initializeApp(options:DefaultFirebaseOptions.currentPlatform,);
+- android/app/build.gradle
+  - line 50 ganti jadi : minSdkVersion 19
+  - dibawah line 54 tambahakn : multiDexEnabled true
