@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:whatsapp_clone/common/enum/message_type.dart';
 import 'package:whatsapp_clone/common/extension/custom_theme_extension.dart';
 import 'package:whatsapp_clone/common/utils/coloors.dart';
 import 'package:whatsapp_clone/common/widgets/custom_icon_button.dart';
+import 'package:whatsapp_clone/feature/auth/pages/image_picker_page.dart';
 import 'package:whatsapp_clone/feature/chat/controllers/chat_controller.dart';
 
 class ChatTextField extends ConsumerStatefulWidget {
@@ -25,6 +27,56 @@ class _ChatTextFieldState extends ConsumerState<ChatTextField> {
 
   bool isMessageIconEnabled = false;
   double cardHeight = 0;
+
+  void sendImageMessageFromGallery() async {
+    final image = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const ImagePickerPage(),
+      ),
+    );
+
+    if (image != null) {
+      sendFileMessage(
+        image,
+        MessageType.image,
+      );
+
+      setState(
+        () => cardHeight = 0,
+      );
+    }
+  }
+
+  void sendFileMessage(
+    var file,
+    MessageType messageType,
+  ) async {
+    ref.read(chatControllerProvider).sendFIleMessage(
+          context,
+          file,
+          widget.receiverId,
+          messageType,
+        );
+
+    await Future.delayed(
+      const Duration(
+        milliseconds: 500,
+      ),
+    );
+
+    SchedulerBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        widget.scrollController.animateTo(
+          widget.scrollController.position.maxScrollExtent,
+          duration: const Duration(
+            milliseconds: 300,
+          ),
+          curve: Curves.easeOut,
+        );
+      },
+    );
+  }
 
   void sendTextMessage() async {
     if (isMessageIconEnabled) {
@@ -138,7 +190,7 @@ class _ChatTextFieldState extends ConsumerState<ChatTextField> {
                         background: const Color(0xFFFE2E74),
                       ),
                       iconWithText(
-                        onPressed: () {},
+                        onPressed: sendImageMessageFromGallery,
                         icon: Icons.photo,
                         text: "Gallery",
                         background: const Color(0xFFC861F9),

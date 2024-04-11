@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:custom_clippers/custom_clippers.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:whatsapp_clone/common/enum/message_type.dart' as myMessageType;
 import 'package:whatsapp_clone/common/extension/custom_theme_extension.dart';
 import 'package:whatsapp_clone/common/models/message_model.dart';
 
@@ -43,56 +45,112 @@ class MessageCard extends StatelessWidget {
                 bubbleRadius: haveNip ? 10 : 0,
               )
             : null,
-        child: Container(
-          padding: EdgeInsets.only(
-            top: 8,
-            bottom: 8,
-            left: isSender ? 10 : 15,
-            right: isSender ? 15 : 10,
-          ),
-          decoration: BoxDecoration(
-            color: isSender
-                ? context.theme.senderChatCardBg
-                : context.theme.receiverChatCardBg,
-            borderRadius: haveNip
-                ? null
-                : BorderRadius.circular(
-                    10,
-                  ),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black38,
-              )
-            ],
-          ),
-          child: Stack(
-            children: [
-              Padding(
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: isSender
+                    ? context.theme.senderChatCardBg
+                    : context.theme.receiverChatCardBg,
+                borderRadius: haveNip
+                    ? null
+                    : BorderRadius.circular(
+                        10,
+                      ),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black38,
+                  )
+                ],
+              ),
+              child: Padding(
                 padding: const EdgeInsets.only(
                   bottom: 5,
                 ),
-                child: Text(
-                  "${message.textMessage}     ",
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
+                child: message.type == myMessageType.MessageType.image
+                    ? Padding(
+                        padding: const EdgeInsets.only(
+                          right: 3,
+                          top: 3,
+                          left: 3,
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                            12,
+                          ),
+                          child: Image(
+                            image: CachedNetworkImageProvider(
+                              message.textMessage,
+                            ),
+                          ),
+                        ),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.only(
+                          top: 8,
+                          bottom: 8,
+                          left: isSender ? 10 : 15,
+                          right: isSender ? 15 : 10,
+                        ),
+                        child: Text(
+                          "${message.textMessage}         ",
+                          style: const TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
               ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Text(
-                  DateFormat.Hm().format(
-                    message.timeSent,
-                  ),
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: context.theme.greyColor,
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+            Positioned(
+              bottom: message.type == myMessageType.MessageType.text ? 8 : 4,
+              right: message.type == myMessageType.MessageType.text
+                  ? isSender
+                      ? 15
+                      : 10
+                  : 4,
+              child: message.type == myMessageType.MessageType.text
+                  ? Text(
+                      DateFormat.Hm().format(
+                        message.timeSent,
+                      ),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.theme.greyColor,
+                      ),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.only(
+                        left: 20,
+                        right: 10,
+                        bottom: 10,
+                        top: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: const Alignment(0, -1),
+                          end: const Alignment(1, 1),
+                          colors: [
+                            context.theme.greyColor!.withOpacity(0),
+                            context.theme.greyColor!.withOpacity(.3),
+                          ],
+                        ),
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(300),
+                          bottomRight: Radius.circular(100),
+                        ),
+                      ),
+                      child: Text(
+                        DateFormat.Hm().format(
+                          message.timeSent,
+                        ),
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+            ),
+          ],
         ),
       ),
     );
